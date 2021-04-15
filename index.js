@@ -1,5 +1,9 @@
 const { execPromise, seqExecArr, addDNSRecord } = require('./helpers/utils');
-const { cmdArr } = require('./helpers/allSeqs');
+const { cmdArr } = require('./helpers/cmds');
+
+//* run below commands if on nvm
+//sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/node" "/usr/local/bin/node"
+// sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/npm" "/usr/local/bin/npm"
 
 (async () => {
   // const { mainDomain } = process.env;
