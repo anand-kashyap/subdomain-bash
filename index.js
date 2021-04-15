@@ -6,7 +6,7 @@ const { cmdArr } = require('./helpers/cmds');
 // sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/npm" "/usr/local/bin/npm"
 
 (async () => {
-  // const { mainDomain } = process.env;
+  const { mainDomain } = process.env;
   // console.log('mainDomain', mainDomain)
 
   await seqExecArr(cmdArr.slice(0, 1));
