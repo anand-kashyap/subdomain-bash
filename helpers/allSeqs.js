@@ -1,14 +1,4 @@
 
-/*
-all would be env
-const NGINX_AVAILABLE_VHOSTS = '/etc/nginx/sites-available',
-  NGINX_ENABLED_VHOSTS = '/etc/nginx/sites-enabled',
-  WEB_DIR = '/var/www',
-  NGINX_SCHEME = '$scheme',
-  NGINX_REQUEST_URI = '$request_uri',
-  { port, subDomain } = process.env,
-  mainDomain = 'anandkashyap.in'; */
-
 const cmdArr = [
   // Create the Nginx config file.
   {
@@ -33,5 +23,34 @@ server {
 }
 EOF`, msg: 'creating nginx config file'
   },
-  { cmd: ``, msg: '' },
-]
+  // Create {html,log} directories.
+  { cmd: 'mkdir -p $WEB_DIR/$subDomain/{html,logs}', msg: 'Creating {html,log} directories' },
+  // Create {html,log} directories.
+  {
+    cmd: `cat > $WEB_DIR/$subDomain/html/index.html <<EOF
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+          <title>You are in the subdomain $subDomain.$mainDomain</title>
+          <meta charset="utf-8" />
+  </head>
+  <body class="container">
+          <header><h1>You are in the subdomain $subDomain.$mainDomain<h1></header>
+          <div id="wrapper">
+                  This is the body of your subdomain page.
+          </div>
+          <br>
+          <footer>© $(date +%Y)</footer>
+  </body>
+  </html>
+  EOF`, msg: 'Create index.html file'
+  },
+  // Setting the folder permissions
+  { cmd: 'chown -R $USER:$WEB_USER $WEB_DIR/$subDomain/html && chmod -R 755 $WEB_DIR/$subDomain', msg: 'Setting the folder permissions' },
+  // Enable site by creating symbolic link.
+  { cmd: 'ln -s $NGINX_AVAILABLE_VHOSTS/$subDomain $NGINX_ENABLED_VHOSTS/', msg: 'Enable site by creating symbolic link.' },
+  // Restarting the Nginx server.
+  { cmd: '/etc/init.d/nginx restart', msg: 'Restarting the Nginx server.' },
+];
+
+module.exports = { cmdArr };
