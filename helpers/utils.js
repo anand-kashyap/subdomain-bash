@@ -15,7 +15,7 @@ const execPromise = ({ cmd, msg }) => {
     // todo - send started to socket
     if (msg) console.log(msg + ' started');
     try {
-      const dat = execSync('sudo ' + cmd);
+      const dat = execSync('sudo ' + cmd, { shell: true });
       // todo - send success to socket
       res(dat.toString());
     } catch (er) {
