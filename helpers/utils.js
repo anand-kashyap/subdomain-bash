@@ -37,8 +37,12 @@ const execPromise = ({ cmd, msg }, pushProg, percent) => {
 };
 
 const seqExecArr = async (cmdArr, pushProg) => {
-  for (const [i, cmdObj] of cmdArr.entries()) {
-    const percent = +(((i + 1) / cmdArr.length + 2) * 100).toFixed(1);
+  const total = cmdArr.length + 2;
+
+  for (let i = 0; i < cmdArr.length; i++) {
+    const cmdObj = cmdArr[i];
+    console.log({ total, index: i + 1 });
+    const percent = (((i + 1) / total) * 100);
     await execPromise(cmdObj, pushProg, percent);
   }
 }

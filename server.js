@@ -3,18 +3,21 @@ const { Server } = require('socket.io'),
   { execPromise, seqExecArr, addDNSRecord } = require('./helpers/utils'),
   { events } = require('./helpers/constants');
 
-const io = new Server(3000);
+const port = process.env.PORT || 3000,
+  io = new Server(port);
 
+console.log('socket connected to port:', port);
 const sendProg = (socket) => ({ percent, msg }) => {
-  socket.broadcast.emit(events.PROGRESS, {
+  console.log('pushprog call', { percent, msg });
+  socket.emit(events.PROGRESS, {
     percent, msg
   });
 }
 
 io.on('connection', socket => {
   console.log('connected');
-  const pushProg = sendProg(socket);
   socket.on(events.ADD_SUBDOMAIN, async ({ port, subDomain, mainDomain = 'anandkashyap.in' }) => {
+    const pushProg = sendProg(socket);
     console.log('socket.on -> ADD_SUBDOMAIN')
     pushProg({ percent: 0, msg: 'started registering subdomain' });
 
@@ -22,14 +25,14 @@ io.on('connection', socket => {
 
     // add domain in netlify
     await addDNSRecord();
-    const percent = +(((cmdArr.length + 1) / cmdArr.length + 2) * 100).toFixed(1);
+    const currentPos = cmdArr.length + 1, total = cmdArr.length + 2,
+      percent = ((currentPos / total) * 100);
     pushProg({
       percent, msg: 'added dns to netlify'
     });
 
     await execPromise({ cmd: `certbot --nginx -d $subDomain.$mainDomain`, msg: 'Register SSL' }, pushProg, 100);
   });
-  io.emit('test1', 'okkkk');
 
 });
 
