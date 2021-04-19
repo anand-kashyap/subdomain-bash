@@ -1,6 +1,7 @@
 const { execSync } = require('child_process');
 const axios = require('axios').default;
 const { subDomain, mainDomain, DROPLET_IP, NETLIFY_TOKEN } = process.env;
+const { events } = require('./constants');
 
 axios.defaults = {
   baseURL: 'https://api.netlify.com/api/v1',
@@ -10,14 +11,24 @@ axios.defaults = {
   }
 };
 
-const execPromise = ({ cmd, msg }) => {
+const execPromise = ({ cmd, msg }, pushProg, percent) => {
   return new Promise((res, rej) => {
     // todo - send started to socket
     if (msg) console.log(msg + ' started');
+    if (process.env.dev) {
+      pushProg({
+        percent, msg
+      });
+
+      return res(msg)
+    };
     try {
       const dat = execSync(cmd, { shell: true });
       // todo - send success to socket
       res(dat.toString());
+      pushProg({
+        percent, msg
+      });
     } catch (er) {
       // todo - send error to socket
       rej(er);
@@ -25,13 +36,15 @@ const execPromise = ({ cmd, msg }) => {
   })
 };
 
-const seqExecArr = async (cmdArr) => {
-  for (const cmdObj of cmdArr) {
-    await execPromise(cmdObj);
+const seqExecArr = async (cmdArr, pushProg) => {
+  for (const [i, cmdObj] of cmdArr.entries()) {
+    const percent = +(((i + 1) / cmdArr.length + 2) * 100).toFixed(1);
+    await execPromise(cmdObj, pushProg, percent);
   }
 }
 
 const addDNSRecord = async () => {
+  if (process.env.dev) return console.log('added DNS [dev mode]');
   // get DNS zone id
   const dnsList = await axios.get('/dns_zones');
 
