@@ -16,8 +16,9 @@ const sendProg = (socket) => ({ percent, msg }) => {
 
 io.on('connection', socket => {
   console.log('connected');
+  const pushProg = sendProg(socket);
+
   socket.on(events.ADD_SUBDOMAIN, async ({ port, subDomain, mainDomain = 'anandkashyap.in' }) => {
-    const pushProg = sendProg(socket);
     console.log('socket.on -> ADD_SUBDOMAIN')
     pushProg({ percent: 0, msg: 'started registering subdomain' });
 

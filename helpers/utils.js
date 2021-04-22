@@ -24,7 +24,6 @@ const execPromise = ({ cmd, msg }, pushProg, percent) => {
     };
     try {
       const dat = execSync(cmd, { shell: true });
-      // todo - send success to socket
       res(dat.toString());
       pushProg({
         percent, msg
