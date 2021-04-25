@@ -1,7 +1,8 @@
 const { execSync } = require('child_process');
 const axios = require('axios').default;
-const { subDomain, mainDomain, DROPLET_IP, NETLIFY_TOKEN } = process.env;
-const { events } = require('./constants');
+const { subDomain, mainDomain, DROPLET_IP, NETLIFY_TOKEN } = process.env,
+  { events } = require('./constants');
+
 
 axios.defaults = {
   baseURL: 'https://api.netlify.com/api/v1',
@@ -23,11 +24,11 @@ const execPromise = ({ cmd, msg }, pushProg, percent) => {
       return res(msg)
     };
     try {
-      const dat = execSync(cmd, { shell: true });
-      res(dat.toString());
       pushProg({
         percent, msg
       });
+      const dat = execSync(cmd, { shell: true });
+      res(dat.toString());
     } catch (er) {
       // todo - send error to socket
       rej(er);
@@ -82,4 +83,16 @@ const addDNSRecord = async () => {
   const addedRec = await axios.post(`/dns_zones/${dnsZoneId}/dns_records`, newRec);
   return console.info(`${sName} added successfully with id: ${addedRec.id}`);
 };
-module.exports = { execPromise, seqExecArr, addDNSRecord };
+
+const sendProg = (socket) => ({ percent, msg }) => {
+  console.log('pushprog call', { percent, msg });
+  socket.emit(events.PROGRESS, {
+    percent, msg
+  });
+}
+
+const mapArgtoEnv = (obj) => {
+  process.env = { ...process.env, ...obj };
+}
+
+module.exports = { execPromise, seqExecArr, addDNSRecord, sendProg, mapArgtoEnv };
