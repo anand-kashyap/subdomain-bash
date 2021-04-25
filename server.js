@@ -13,10 +13,10 @@ io.on('connection', socket => {
   const pushProg = sendProg(socket);
 
   socket.on(events.ADD_SUBDOMAIN, async ({ port, subDomain, mainDomain = 'anandkashyap.in', appName }) => {
-    mapArgtoEnv({ port, subDomain, mainDomain = 'anandkashyap.in', appName });
+    mapArgtoEnv({ port, subDomain, mainDomain, appName });
 
     console.log('socket.on -> ADD_SUBDOMAIN')
-    pushProg({ percent: 0, msg: 'started registering subdomain' });
+    pushProg({ percent: 0, msg: `started registering ${subDomain} subdomain` });
 
     await seqExecArr(cmdArr, pushProg);
 
