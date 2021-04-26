@@ -6,10 +6,9 @@ const cmdArr = [
   { cmd: '([ -f $repoName/yarn.lock ] && yarn --cwd $repoName) || ([ -f $repoName/package-lock.json ] && npm i -C $repoName)', msg: 'Installing node_modules(with yarn or npm)' },
   // npm build
   { cmd: 'npm run build --if-present', msg: 'Running npm build if-present' },
-  // ! todo - decide a port to start with, check for next free port? use sqlite?
-  { cmd: 'npm run build --if-present', msg: 'Running npm build if-present' },
+  // ! todo - decide a port to start with, check for next free port? use mysql from serverless funcs
   // use pm2 to start the process with appName(input from frontend?)
-  { cmd: 'PORT=$port pm2 start', msg: 'Running npm build if-present' },
+  { cmd: 'PORT=$port pm2 start npm --name "$appName" -- start', msg: 'Running pm2 start' },
   // Create the Nginx config file.
   {
     cmd: `cat > $NGINX_AVAILABLE_VHOSTS/$subDomain <<EOF
