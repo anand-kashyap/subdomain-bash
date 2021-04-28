@@ -4,7 +4,7 @@ const { Server } = require('socket.io'),
   { events } = require('./helpers/constants');
 
 const port = process.env.PORT || 3000,
-  io = new Server(port);
+  io = new Server(port, { cors: true });
 
 console.log('socket connected to port:', port);
 
