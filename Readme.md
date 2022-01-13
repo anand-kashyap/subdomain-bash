@@ -7,6 +7,7 @@ Refer .env.example env to set.
 
 - [x] update npm dependencies
 - [ ] convert to TS
+- [ ] transpile only flag indev ts-node-dev
 - [ ] better func,var names
 - [ ] Object oriented instead of functions
 - [ ] custom error classes extended from base Error
