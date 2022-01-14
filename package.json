@@ -3,11 +3,11 @@
   "private": true,
   "version": "2.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "start": "node .",
-    "start:dev": "dev=true ts-node-dev -r dotenv/config src/server.ts",
-    "dev": "dev=true nodemon -r dotenv/config .",
+    "dev": "dev=true ts-node-dev -r dotenv/config src/index.ts",
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Anand K.",
