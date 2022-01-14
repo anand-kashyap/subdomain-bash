@@ -3,6 +3,12 @@ declare global {
     interface ProcessEnv {
       NODE_ENV: 'development' | 'production';
       PORT: number;
+      dev: boolean;
+      port?: number; // api to deploy port
+      subDomain?: string;
+      mainDomain: string;
+      NETLIFY_TOKEN: string;
+      DROPLET_IP: string;
     }
   }
 }
