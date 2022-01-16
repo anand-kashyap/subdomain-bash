@@ -6,13 +6,13 @@ Refer .env.example env to set.
 ## Todo
 
 - [x] update npm dependencies
-- [ ] convert to TS
+- [x] throw error if process.env not found
+- [x] convert to TS
+- [x] util classes with static methods
+- [x] better func,var names
+- [x] Object oriented instead of functions
 - [ ] transpile only flag indev ts-node-dev
-- [ ] throw error if process.env not found
-- [ ] better func,var names
-- [ ] Object oriented instead of functions
 - [ ] custom error classes extended from base Error
-- [ ] util classes with static methods
 - [ ] unit tests in jest/mocha
 - [ ] logs saving to file - pinojs
 - [ ] github action for build & deploy to server along with env passing as args

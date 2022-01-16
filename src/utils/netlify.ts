@@ -1,30 +1,22 @@
-import { Common } from '.';
 import { netlifyHttpService } from '../services/netlifyAxios';
-import { NetlifyDNSRecord, NetlifyDNSZone } from './types';
-const { mainDomain, DROPLET_IP } = process.env;
+import { NetlifyDNSRecord, NetlifyDNSZone } from '../types';
+const { DROPLET_IP } = process.env;
 
 class NetlifyAPI {
-  private subDomain: string;
-  private subdomainFullUrl: string;
+  private subDomain = '';
+  private mainDomain = '';
+  private subdomainFullUrl = '';
+  private apiClient = netlifyHttpService();
 
-  constructor(subDomain?: string, private apiClient = netlifyHttpService()) {
-    if (!subDomain && !process.env.dev) {
-      throw new Error('subdomain must be passed');
-    }
-    if (!subDomain && process.env.dev) {
-      this.subDomain = Common.getEnvVariable('subDomain');
-    }
+  constructor() {}
 
-    this.subDomain = subDomain as string;
-    this.subdomainFullUrl = `${this.subDomain}.${mainDomain}`;
-  }
-
-  async getDNSZone(mainDomain: string) {
+  async getDNSZone() {
     const dnsList = await this.apiClient.get<any, NetlifyDNSZone[]>(
       '/dns_zones'
     );
-    const dnsZone = dnsList.find((dns) => dns.name === mainDomain);
-    if (!dnsZone?.id) throw new Error(`site: ${mainDomain} not found in DNS`);
+    const dnsZone = dnsList.find((dns) => dns.name === this.mainDomain);
+    if (!dnsZone?.id)
+      throw new Error(`site: ${this.mainDomain} not found in DNS`);
 
     return dnsZone;
   }
@@ -58,8 +50,25 @@ class NetlifyAPI {
       `${this.subdomainFullUrl} added successfully with id: ${addedRec.id}`
     );
   }
+
+  async addDNSRecord() {
+    if (process.env.dev) return console.log('added DNS [dev mode]');
+
+    const { mainDomain, subDomain } = process.env;
+    if (!subDomain) {
+      throw new Error('subdomain must be passed');
+    }
+
+    this.subDomain = subDomain as string;
+    this.mainDomain = mainDomain as string;
+    this.subdomainFullUrl = `${this.subDomain}.${this.mainDomain}`;
+
+    const dnsZone = await this.getDNSZone();
+    await this.validateSubdomainRecord(dnsZone.id);
+    await this.addDNSRecordByDNSZoneId(dnsZone.id);
+  }
 }
 
-const createInstance = (subdomain?: string) => new NetlifyAPI(subdomain);
+const netlifyClientCreator = () => new NetlifyAPI();
 
-export { createInstance };
+export { NetlifyAPI, netlifyClientCreator };

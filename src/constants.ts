@@ -1,8 +1,18 @@
-const envVarNames = ['mainDomain', 'NETLIFY_TOKEN', 'DROPLET_IP']; // port,subdomain are optional
+const envVarNames = [
+  'appName',
+  'port',
+  'subDomain',
+  'mainDomain',
+  'NETLIFY_TOKEN',
+  'DROPLET_IP',
+];
 
 enum CustomEvents {
   ADD_SUBDOMAIN = 'add_subdomain',
   PROGRESS = 'progress',
 }
 
-export { CustomEvents, envVarNames };
+enum SequenceCustomEvent {
+  ADD_DNS_RECORD,
+}
+export { CustomEvents, envVarNames, SequenceCustomEvent };
