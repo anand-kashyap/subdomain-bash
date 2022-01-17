@@ -1,4 +1,5 @@
 import { Server } from 'socket.io';
+import { logger } from './config/logger';
 import { CustomEvents } from './constants';
 import {
   Common,
@@ -10,7 +11,7 @@ Common.validateEnvVariables(); // ! should be called first
 const port = (process.env.PORT || 3000) as number,
   io = new Server(port, { cors: { origin: '*' } });
 
-console.log('socket connected to port:', port);
+logger.info('🐱‍👓 socket connected to port:', port);
 
 io.on('connection', (socket) => {
   console.log('connected');

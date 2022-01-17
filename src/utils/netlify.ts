@@ -1,12 +1,16 @@
+import { CustomException } from '../errors';
+import { NetlifyAPIError } from '../errors/api/netlifyError';
 import { netlifyHttpService } from '../services/netlifyAxios';
 import { NetlifyDNSRecord, NetlifyDNSZone } from '../types';
 const { DROPLET_IP } = process.env;
-
+/**
+ * Netlify API related methods only
+ */
 class NetlifyAPI {
   private subDomain = '';
   private mainDomain = '';
   private subdomainFullUrl = '';
-  private apiClient = netlifyHttpService();
+  private apiClient = netlifyHttpService(NetlifyAPIError);
 
   constructor() {}
 
@@ -16,7 +20,7 @@ class NetlifyAPI {
     );
     const dnsZone = dnsList.find((dns) => dns.name === this.mainDomain);
     if (!dnsZone?.id)
-      throw new Error(`site: ${this.mainDomain} not found in DNS`);
+      throw new CustomException(`site: ${this.mainDomain} not found in DNS`);
 
     return dnsZone;
   }
@@ -28,7 +32,7 @@ class NetlifyAPI {
     );
     for (const rec of dnsRecs) {
       if (rec.hostname === this.subdomainFullUrl) {
-        throw new Error(
+        throw new CustomException(
           `${this.subdomainFullUrl} record already present in DNS records`
         );
       }
@@ -56,7 +60,7 @@ class NetlifyAPI {
 
     const { mainDomain, subDomain } = process.env;
     if (!subDomain) {
-      throw new Error('subdomain must be passed');
+      throw new CustomException('subdomain must be passed');
     }
 
     this.subDomain = subDomain as string;

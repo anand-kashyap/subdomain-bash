@@ -11,8 +11,7 @@ Refer .env.example env to set.
 - [x] util classes with static methods
 - [x] better func,var names
 - [x] Object oriented instead of functions
-- [ ] transpile only flag indev ts-node-dev
-- [ ] custom error classes extended from base Error
+- [x] custom error classes extended from base Error
+- [x] logs saving to file - pinojs
 - [ ] unit tests in jest/mocha
-- [ ] logs saving to file - pinojs
-- [ ] github action for build & deploy to server along with env passing as args
+- [ ] later - github action for build & deploy to server along with env passing as args

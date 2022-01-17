@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "pino": "^7.6.3",
     "socket.io": "^4.0.1"
   },
   "optionalDependencies": {

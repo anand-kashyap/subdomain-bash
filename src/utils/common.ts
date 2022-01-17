@@ -1,4 +1,5 @@
 import { envVarNames } from '../constants';
+import { CustomException, EnvVarError } from '../errors';
 
 class Common {
   static validateEnvVariables() {
@@ -9,19 +10,21 @@ class Common {
     args.forEach((arg) => {
       if (!Boolean(arg)) {
         console.log('all args', args);
-        throw new Error(`invalid arg - ${arg}`);
+        throw new CustomException(`invalid arg - ${arg}`);
       }
     });
   }
 
   static getEnvVariable(envName: string) {
     const envValue = process.env[envName];
-    if (envValue === undefined) {
-      throw new Error(`${envName} is an undefined env variable`);
-    }
+    if (!envValue) throw new EnvVarError(envName);
     return envValue;
   }
 
+  /**
+   * set process.env vars from a json
+   * @param obj any valid json object
+   */
   static addObjectValuesToProcessEnv(obj: any) {
     this.validateAllArgsPresent(...obj);
     console.log('setting env vars from function args');
