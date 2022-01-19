@@ -14,7 +14,7 @@ const port = (process.env.PORT || 3000) as number,
 logger.info('🐱‍👓 socket connected to port:', port);
 
 io.on('connection', (socket) => {
-  console.log('connected');
+  logger.info('connected');
   const netlifyClient = netlifyClientCreator(),
     subdomainCreator = subdomainInsCreator(socket);
 

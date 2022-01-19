@@ -1,5 +1,4 @@
 import { CustomException } from '../errors';
-import { NetlifyAPIError } from '../errors/api/netlifyError';
 import { netlifyHttpService } from '../services/netlifyAxios';
 import { NetlifyDNSRecord, NetlifyDNSZone } from '../types';
 const { DROPLET_IP } = process.env;
@@ -10,7 +9,7 @@ class NetlifyAPI {
   private subDomain = '';
   private mainDomain = '';
   private subdomainFullUrl = '';
-  private apiClient = netlifyHttpService(NetlifyAPIError);
+  private apiClient = netlifyHttpService();
 
   constructor() {}
 
