@@ -1,0 +1,3 @@
+{
+  "mocha-snippets.glob": "**/*.test.ts"
+}
