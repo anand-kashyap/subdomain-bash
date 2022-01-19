@@ -13,5 +13,7 @@ Refer .env.example env to set.
 - [x] Object oriented instead of functions
 - [x] custom error classes extended from base Error
 - [x] logs saving to file - pinojs
-- [ ] unit tests in jest/mocha
+- [x] unit tests setup done in jest
 - [ ] later - github action for build & deploy to server along with env passing as args
+
+---
