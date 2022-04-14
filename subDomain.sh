@@ -1,9 +1,10 @@
 #!/bin/bash
 #
+# todo - add support for websocket block
 # make script executable first with chmod +x scriptname
 # Bash script for generating new subdomain with a new server block(nodejs by default) in Nginx.
 # syntax - ./{scriptname} subDomainName mainDomainName PORT
-# this script has to be in home root directory to work
+# this script has to be in home root(~) directory to work
 
 # Functions
 ok() { echo -e '\e[32m'$1'\e[m'; } # Green
