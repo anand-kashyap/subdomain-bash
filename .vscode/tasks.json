@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "dev",
+			"problemMatcher": [],
+			"label": "npm: dev",
+			"runOptions": {
+				"runOn": "folderOpen"
+			},
+			"detail": "dev=true ts-node-dev -r dotenv/config src/index.ts"
+		}
+	]
+}

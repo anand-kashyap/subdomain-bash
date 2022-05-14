@@ -2,11 +2,12 @@ import { exec } from 'child_process';
 import { Socket } from 'socket.io';
 import { promisify } from 'util';
 import { NetlifyAPI } from '.';
+import { logger } from '../config/logger';
 import { CustomEvents, SequenceCustomEvent } from '../constants';
 import { BashCommand, ProgressSocketEventPayload } from '../types';
 import { cmdArr as commandArr } from './bashScripts';
 
-const execPromise = promisify(exec);
+export const execPromise = promisify(exec);
 
 class SubdomainCreationProgress {
   constructor(private socket: Socket) {}
@@ -20,26 +21,43 @@ class SubdomainCreationProgress {
   }
 
   async execBashCommand(command: BashCommand, percent: number) {
-    const { bashCommand, message } = command;
+    const { bashCommand, message, isSudo = false } = command;
     if (!bashCommand) {
       throw new Error('bash cmd not passed');
     }
     // todo - send started to socket
     console.log(message + ' started');
+    if (process.env.dev) {
+      return setTimeout(() => {
+        this.emitProgress({
+          percent,
+          msg: message,
+        });
+      }, 1000);
+    }
     this.emitProgress({
       percent,
       msg: message,
     });
-    if (process.env.dev) {
-      return message;
+    try {
+      const dat = await execPromise(isSudo ? `sudo sh -c "${bashCommand}"` : bashCommand, {
+        shell: 'bash',
+        cwd: process.env.WEB_DIR,
+      });
+      logger.info('data', dat);
+      return dat.toString();
+      // todo - send error to socket
+    } catch (error) {
+      logger.error(error);
+      this.emitProgress({
+        percent,
+        msg: JSON.stringify(error),
+      });
     }
-    const dat = await execPromise(bashCommand, { shell: 'true' });
-    // todo - send error to socket
-    return dat.toString();
   }
 
   async seqExecBashCommands(netlifyClient?: NetlifyAPI) {
-    const totalCommands = commandArr.length + 2;
+    const totalCommands = commandArr.length;
 
     for (let index = 0; index < commandArr.length; index++) {
       const command = commandArr[index],
@@ -51,12 +69,11 @@ class SubdomainCreationProgress {
         await netlifyClient?.addDNSRecord();
         continue;
       }
-      await this.execBashCommand(command, percent);
+      await this.execBashCommand(command, +percent.toFixed(2));
     }
   }
 }
 
-const subdomainCreator = (socket: Socket) =>
-  new SubdomainCreationProgress(socket);
+const subdomainCreator = (socket: Socket) => new SubdomainCreationProgress(socket);
 
 export { subdomainCreator };

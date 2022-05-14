@@ -2,7 +2,11 @@ import { SequenceCustomEvent } from '../constants';
 import { BashCommand } from '../types';
 
 const cmdArr: BashCommand[] = [
-  { bashCommand: 'git clone $repoUrl $repoName', message: 'Cloning Git repo' },
+  {
+    bashCommand: 'git clone $repoUrl $repoName',
+    //  message: 'Cloning Git repo'
+    message: 'Cloning Git repo',
+  },
   // check for yarn lock or package json lock - install node_modules
   {
     bashCommand:
@@ -10,7 +14,7 @@ const cmdArr: BashCommand[] = [
     message: 'Installing node_modules(with yarn or npm)',
   },
   {
-    bashCommand: 'npm run build --if-present',
+    bashCommand: 'npm run build --if-present -C $repoName',
     message: 'Running npm build if-present',
   },
   // ! todo - decide a port to start with, check for next free port? use mysql from serverless funcs
@@ -41,6 +45,7 @@ server {
 }
 EOF`,
     message: 'Creating nginx config file',
+    isSudo: true,
   },
   {
     bashCommand: 'mkdir -p $WEB_DIR/$subDomain/{html,logs}',
@@ -63,20 +68,21 @@ EOF`,
           <footer>© $(date +%Y)</footer>
   </body>
   </html>
-  EOF`,
+EOF`,
     message: 'Create index.html file',
   },
   {
-    bashCommand:
-      'chown -R $USER:$WEB_USER $WEB_DIR/$subDomain/html && chmod -R 755 $WEB_DIR/$subDomain',
+    isSudo: true,
+    bashCommand: 'chown -R $USER:$WEB_USER $WEB_DIR/$subDomain/html && chmod -R 755 $WEB_DIR/$subDomain',
     message: 'Setting the folder permissions',
   },
   {
-    bashCommand:
-      'ln -s $NGINX_AVAILABLE_VHOSTS/$subDomain $NGINX_ENABLED_VHOSTS/',
+    isSudo: true,
+    bashCommand: 'ln -s $NGINX_AVAILABLE_VHOSTS/$subDomain $NGINX_ENABLED_VHOSTS/',
     message: 'Enable site by creating symbolic link.',
   },
   {
+    isSudo: true,
     bashCommand: '/etc/init.d/nginx restart',
     message: 'Restarting the Nginx server.',
   },

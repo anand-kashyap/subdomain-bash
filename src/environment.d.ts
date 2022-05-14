@@ -9,6 +9,7 @@ declare global {
       mainDomain: string;
       NETLIFY_TOKEN: string;
       DROPLET_IP: string;
+      WEB_DIR: string;
     }
   }
 }
