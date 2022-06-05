@@ -10,6 +10,7 @@ import { cmdArr as commandArr } from './bashScripts';
 export const execPromise = promisify(exec);
 
 class SubdomainCreationProgress {
+  private devCount = 1;
   constructor(private socket: Socket) {}
 
   private emitProgress({ percent, msg }: ProgressSocketEventPayload) {
@@ -25,7 +26,6 @@ class SubdomainCreationProgress {
     if (!bashCommand) {
       throw new Error('bash cmd not passed');
     }
-    // todo - send started to socket
     console.log(message + ' started');
     if (process.env.dev) {
       return setTimeout(() => {
@@ -33,7 +33,7 @@ class SubdomainCreationProgress {
           percent,
           msg: message,
         });
-      }, 1000);
+      }, 1000 * this.devCount);
     }
     this.emitProgress({
       percent,
@@ -58,7 +58,9 @@ class SubdomainCreationProgress {
 
   async seqExecBashCommands(netlifyClient?: NetlifyAPI) {
     const totalCommands = commandArr.length;
-
+    if (process.env.dev) {
+      this.devCount = 1;
+    }
     for (let index = 0; index < commandArr.length; index++) {
       const command = commandArr[index],
         position = index + 1;
@@ -70,6 +72,9 @@ class SubdomainCreationProgress {
         continue;
       }
       await this.execBashCommand(command, +percent.toFixed(2));
+      if (process.env.dev) {
+        ++this.devCount;
+      }
     }
   }
 }
