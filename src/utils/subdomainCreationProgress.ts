@@ -33,7 +33,7 @@ class SubdomainCreationProgress {
           percent,
           msg: message,
         });
-      }, 1000 * this.devCount);
+      }, 500 * this.devCount);
     }
     this.emitProgress({
       percent,
